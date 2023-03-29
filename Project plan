@@ -1,0 +1,121 @@
+##PURPOSE OF THE STUDY
+  To constrain the metabolic contributions from uncultivated groups in the nGOM during periods of low DO.
+  (Marine Group II Euryarchaeota, SAR406, SAR202, Parcubacteria, Peregrinibacteria, ACD39 and PAUC34f).
+  
+##Data divided into:
+  #Metagenomics - Illumina HiSeq 2000
+        SRX2209184: Metagenomics of GOM dead zone: site D1 - Shotgun libraries 2x100 bp
+        SRX2209191: Metagenomics of GOM dead zone: site E4 - Shotgun libraries 2x100 bp
+  #Metatranscriptomics
+        SRX2209192: Metatranscriptomics of GOM dead zone: site D1 -  Libraries 2x100 bp
+        SRX2209187: Metatranscriptomics of GOM dead zone: site E4 - ibraries 2x100 bp
+        
+  ##Data origins:
+    Six samples representing hypoxic (n = 4) and oxic (n = 2) dissolved oxygen (DO) concentrations were picked from among those
+    previously reported (https://ami-journals.onlinelibrary.wiley.com/doi/10.1111/1462-2920.12853) at stations D1, D2, D3, E2, E2A,
+    and E4. DO, nutrient collection and nucleid acids were collected at these six stations: 10 liters of seawater collected anf filtered
+    with a peristaltic pump. DNA and RNA were extracted directly off the filter. Protocol described by Gillies et al.
+  
+##What would be the main steps you need to take?
+  1. Illumina HiSeq 2000 chemistry - generate 100 bp, paired-end reads. This is for sequencing, assembly and binning. 
+  2. Scythe to quality trim the DNA sequencing reads.
+  3. All six samples are to be pooled, assembled, and binned using the previous methods.
+  4. IDBA-UD to assemble quality-filtered reads.
+  5. Initial binning of the assembled fragments perfomed by using tetranucleotide frequency signatures - 5 kbp fragments of the contigs.
+  6. Manually delineation and curation based on clusters within the map for ESOM (Emergent self-organizing maps).
+  7. DNA ad RNA mapping. BWA used to compare bin abundance across samples and facilitate bin cleanup -
+   Metagenomic and metatranscriptomic sequencing reads from each sample separetly mapped to binned contigs.
+  8. CheckM for bin quality control. Clean bins > 10% estimated contamination.
+  9. Ribosomal protein tree generated using 16 syntenic genes that have been shown to undergo limited lateral gene transfer.
+  10. Ribosomal proteins for each bin were identified with Phylosift. 
+  11. Aminoacid alignments of the individual ribosomal proteins
+  were generated using MUSCLE and trimmed using BMGE.
+  12. Curated alignments were then concatenated for phylogenetic analyses
+  and phylogeny was inferred via RAxML.
+  13. Average amino acid identity calculated with GET_HOMOLOGUES ( https://doi.org/10.1128/AEM.02411-13 ).
+  14. Taxonomic assignment primarily usig protein tree and ---- concatenated marker gene tree of CheckM analysis ---- 16S rRNA gene sequences.
+  15. Alignment, culling, and inference completed with MUSCLE, Gblocks, and FastTree2, respectively, with the FT_pipe_script (https://thethrashlab.com/publications/).
+  16. After binning, genomes to be submitted individually to IMG for annotation.
+  17. RPKM abundance quantified by evaluating mapped reads using RPKM normalization. On a plot of DNA coverage rank versus
+    RNA coverage rank, residuals for each bin or gene calculated from the identity.
+  18. nrfA assessment
+
+##Extra analysis for higher grade (some redudant)
+        #Abundance of different organisms/bins
+        #Refine taxonomic ID of assembled genomes
+        #Metabolic pathway reconstructions for chosen bins
+        #Analysis of expression data of chosen gene groups
+        #Comparisons across bins
+        #Comparative genomics of bins
+        #Ortholog gene clustering of bins
+
+##Proposed software
+        #FastQC for reading quality control -> https://www.bioinformatics.babraham.ac.uk/projects/fastqc/
+              #Trimmomatic for Reads preprocessing -> http://www.usadellab.org/cms/uploads/supplementary/Trimmomatic/TrimmomaticManual_V0.32.pdf
+              #Canu / SOAPdenovo / Spades / Megahit (THIS IS FOR LARGE AND COMPLEX METAGONIMICS NGS READS)/ Pilon,, RepatMasker, Trinity... all for DNA assembly -> https://github.com/voutcn/megahit
+              #QUAST / MUMmerplot for assembly evaluation -> http://quast.sourceforge.net/docs/manual.html
+        #Metbat for binning -> https://bitbucket.org/berkeleylab/metabat/wiki/Home
+        #CheckM for binning evaluation -> https://github.com/Ecogenomics/CheckM/wiki/Quick-Start
+        #Prokka / BRAKER / EggNOGmapper for annotation - https://github.com/Gaius-Augustus/BRAKER#running-braker
+        #Blastn for homology check -> https://www.ncbi.nlm.nih.gov/books/NBK279690/
+        #Phylophlan for phylogenetic placement 
+        #BWA / STAR for Mapping -> http://bio-bwa.sourceforge.net/bwa.shtml
+              #SAMtools / BCFtools for post-mapping analyses
+              #HTSeq for read counting -> https://htseq.readthedocs.io/en/release_0.9.1/count.html#count
+        #DESeq2 for expression analyses -> https://bioc.ism.ac.jp/packages/2.14/bioc/vignettes/DESeq2/inst/doc/beginner.pdf
+              #IGV / Artemis Comparison Tool (ACT) for visualization of the genomes -> http://software.broadinstitute.org/software/igv/userguide
+
+##Estimated duration of analysis
+    #FastQC - 15 min
+    #Metabat - 30 min
+    #CheckM - 2 hours
+    #Quast - 45 min
+    #Prokka - 1 hour
+    #PhyloPhlan - 6 hours -> Most limiting analysis time-wise!
+    #BWA - 4-6 hours -> Limiting analysis time-wise!
+    #Deseq2 - variable -> ???
+    
+##DATA MANAGEMENT PLAN
+    #Data and code separated. Code in a repository with version control. Small data files (final results, figures and text)
+    can be included in the repository, but never big data files.
+    #Data files should have unique and informative names in the format: XXX_name_name when required. Read files named as their SRA accessions.
+    #There should be a README file per folder, explaining what's it used for 
+    #Datafiles, specially big data files, should be compressed. UPPMAX directory can store up to 32 Gb.
+    
+      #genome_analyses/
+        analyses
+          01_preprocessing
+            trimming_software
+              conditionA.trim.fast1.gz -> ../.../.../...
+              conditionB.trim.fast1.gz -> ../.../.../...
+            fastqc_raw
+              fastqc_report.txt
+            fastqc_trim
+              fastqc_report.txt
+          02_genome_assemly
+            assembly_softwareA-settingsX
+            assembly_softwareB_settingsX
+          03_structural_annotation
+            annotation_software_settingsX
+        code
+          000_gather_data.sh
+          001_preprocessing.sh
+          002_genome_assembly.sh
+          003_gstructural_annotation.sh
+        data
+          metadata
+            sample_information.csv
+          raw_data
+            metagenomics
+              SRX2209184.fastq.gz
+              SRX2209191.fastq.gz
+            metatranscriptomics
+              SRX2209192.fastq.gz
+              SRX2209187.fastq.gz
+          trimmed_data
+            metagenomics
+              SRX2209184.trimmed.fastq.gz
+              SRX2209191.trimmed.fastq.gz
+            metatranscriptomics
+              SRX2209192.trimmed.fastq.gz
+              SRX2209187.trimmed.fastq.gz
