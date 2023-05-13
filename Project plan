@@ -3,81 +3,58 @@
   (Marine Group II Euryarchaeota, SAR406, SAR202, Parcubacteria, Peregrinibacteria, ACD39 and PAUC34f).
   
 ##Data divided into:
-  #Metagenomics - Illumina HiSeq 2000
-        SRX2209184: Metagenomics of GOM dead zone: site D1 - Shotgun libraries 2x100 bp
-        SRX2209191: Metagenomics of GOM dead zone: site E4 - Shotgun libraries 2x100 bp
-  #Metatranscriptomics
-        SRX2209192: Metatranscriptomics of GOM dead zone: site D1 -  Libraries 2x100 bp
-        SRX2209187: Metatranscriptomics of GOM dead zone: site E4 - ibraries 2x100 bp
-        
-  ##Data origins:
+  #Oxic - D1:
+    SRR4342129 - metagenomics (DNA)
+    SRR4342137 - metatranscriptomics (RNA)
+  # Hypoxic - D3
+    SRR4342133 - metagenomics (DNA)
+    SRR4342139 - metatranscriptomics (RNA)
+            
+  ##Data origins:   
     Six samples representing hypoxic (n = 4) and oxic (n = 2) dissolved oxygen (DO) concentrations were picked from among those
     previously reported (https://ami-journals.onlinelibrary.wiley.com/doi/10.1111/1462-2920.12853) at stations D1, D2, D3, E2, E2A,
-    and E4. DO, nutrient collection and nucleid acids were collected at these six stations: 10 liters of seawater collected anf filtered
-    with a peristaltic pump. DNA and RNA were extracted directly off the filter. Protocol described by Gillies et al.
+    and E4. In the case of this study, we will focuse exlusively on D1 and D3. The samples have been categorized according to their oxygen content.
+    Hypoxic samples, such as D1, contain very low levels of oxygen, whereas oxic samples, like D3, are characterized by the presence of ample or
+    normal levels of oxygen. This difference in oxygen levels significantly impacts the characteristics and behaviors of the organisms within these samples.
   
 ##What would be the main steps you need to take?
-  1. Illumina HiSeq 2000 chemistry - generate 100 bp, paired-end reads. This is for sequencing, assembly and binning. 
-  2. Scythe to quality trim the DNA sequencing reads.
-  3. All six samples are to be pooled, assembled, and binned using the previous methods.
-  4. IDBA-UD to assemble quality-filtered reads.
-  5. Initial binning of the assembled fragments perfomed by using tetranucleotide frequency signatures - 5 kbp fragments of the contigs.
-  6. Manually delineation and curation based on clusters within the map for ESOM (Emergent self-organizing maps).
-  7. DNA ad RNA mapping. BWA used to compare bin abundance across samples and facilitate bin cleanup -
-   Metagenomic and metatranscriptomic sequencing reads from each sample separetly mapped to binned contigs.
-  8. CheckM for bin quality control. Clean bins > 10% estimated contamination.
-  9. Ribosomal protein tree generated using 16 syntenic genes that have been shown to undergo limited lateral gene transfer.
-  10. Ribosomal proteins for each bin were identified with Phylosift. 
-  11. Aminoacid alignments of the individual ribosomal proteins
-  were generated using MUSCLE and trimmed using BMGE.
-  12. Curated alignments were then concatenated for phylogenetic analyses
-  and phylogeny was inferred via RAxML.
-  13. Average amino acid identity calculated with GET_HOMOLOGUES ( https://doi.org/10.1128/AEM.02411-13 ).
-  14. Taxonomic assignment primarily usig protein tree and ---- concatenated marker gene tree of CheckM analysis ---- 16S rRNA gene sequences.
-  15. Alignment, culling, and inference completed with MUSCLE, Gblocks, and FastTree2, respectively, with the FT_pipe_script (https://thethrashlab.com/publications/).
-  16. After binning, genomes to be submitted individually to IMG for annotation.
-  17. RPKM abundance quantified by evaluating mapped reads using RPKM normalization. On a plot of DNA coverage rank versus
-    RNA coverage rank, residuals for each bin or gene calculated from the identity.
-  18. nrfA assessment
-
-##Extra analysis for higher grade (some redudant)
-        #Abundance of different organisms/bins
-        #Refine taxonomic ID of assembled genomes
-        #Metabolic pathway reconstructions for chosen bins
-        #Analysis of expression data of chosen gene groups
-        #Comparisons across bins
-        #Comparative genomics of bins
-        #Ortholog gene clustering of bins
+1. Quality control of the trimmed DNA sequences.
+2. Trimming raw RNA sequences: cleaning up raw RNA sequence data (unwanted sequences such as adapters, low-quality bases, and undetermined bases) to ensure accuracy in the downstream analysis.
+3. Quality control of the trimmed RNA sequences.
+4. Assembly of the already trimmed metagenomic (DNA) data: processed DNA sequences are assembled into longer contiguous sequences named contigs - helps in reconstructing the original genomic sequences of the organisms present in the sample.
+5. Binning:grouping assembled sequences (contigs) into sets that belong to the same genome based on various characteristics: sequence composition, coverage pattern...
+6. Completeness and contamination analysis: assessing the quality of the assembled genomes. Completeness checks how much of the expected genome is present in the assembled sequences. Contamination analysis identifies any sequences that might have originated from different genomes.
+7. Functional annotation of the assembled sequences:  predicting and assigning biological functions to the genes present in the assembled sequences. Includes the identification of coding sequences, rRNA, tRNA, and other functional elements.
+8. Alignment of sequences: sequenced reads are mapped back to the assembled contigs or reference genome. Allows for the identification of the location of each read in the genome, which can be used for various downstream analyses (gene expression).
+9. Quantification of gene expression: number of reads that map to each gene in a genome is counted - measure of that gene's expression level. Allows for the study of how the functional activity of organisms vary under different conditions.
+10. Phylogenetic analysis:  constructing a phylogenetic tree that shows the evolutionary relationships between the organisms present in the samples.
 
 ##Proposed software
-        #FastQC for reading quality control -> https://www.bioinformatics.babraham.ac.uk/projects/fastqc/
-              #Trimmomatic for Reads preprocessing -> http://www.usadellab.org/cms/uploads/supplementary/Trimmomatic/TrimmomaticManual_V0.32.pdf
-              #Canu / SOAPdenovo / Spades / Megahit (THIS IS FOR LARGE AND COMPLEX METAGONIMICS NGS READS)/ Pilon,, RepatMasker, Trinity... all for DNA assembly -> https://github.com/voutcn/megahit
-              #QUAST / MUMmerplot for assembly evaluation -> http://quast.sourceforge.net/docs/manual.html
-        #Metbat for binning -> https://bitbucket.org/berkeleylab/metabat/wiki/Home
-        #CheckM for binning evaluation -> https://github.com/Ecogenomics/CheckM/wiki/Quick-Start
-        #Prokka / BRAKER / EggNOGmapper for annotation - https://github.com/Gaius-Augustus/BRAKER#running-braker
-        #Blastn for homology check -> https://www.ncbi.nlm.nih.gov/books/NBK279690/
-        #Phylophlan for phylogenetic placement 
-        #BWA / STAR for Mapping -> http://bio-bwa.sourceforge.net/bwa.shtml
-              #SAMtools / BCFtools for post-mapping analyses
-              #HTSeq for read counting -> https://htseq.readthedocs.io/en/release_0.9.1/count.html#count
-        #DESeq2 for expression analyses -> https://bioc.ism.ac.jp/packages/2.14/bioc/vignettes/DESeq2/inst/doc/beginner.pdf
-              #IGV / Artemis Comparison Tool (ACT) for visualization of the genomes -> http://software.broadinstitute.org/software/igv/userguide
-
+        #(1 & 3) FastQC -> https://www.bioinformatics.babraham.ac.uk/projects/fastqc/
+        #(2) Trimmomatic -> http://www.usadellab.org/cms/uploads/supplementary/Trimmomatic/TrimmomaticManual_V0.32.pdf
+        #(3) Megahit -> https://github.com/voutcn/megahit
+        #(4) Metbat -> https://bitbucket.org/berkeleylab/metabat/wiki/Home
+        #(5) CheckM for binning evaluation -> https://github.com/Ecogenomics/CheckM/wiki/Quick-Start
+        #(6) Prokka  -> https://github.com/tseemann/prokka#invoking-prokka
+        #(7) Bwa -> http://bio-bwa.sourceforge.net/bwa.shtml
+          #SAMtools / BCFtools for post-mapping analyses
+        #(8) HTseq -> https://htseq.readthedocs.io/en/release_0.9.1/count.html#count
+        #(9) Phylophlan -> https://github.com/biobakery/phylophlan/wiki 
+        
 ##Estimated duration of analysis
     #FastQC - 15 min
-    #Metabat - 30 min
+    #Trimmomatic ~
+    #Metabat - 30 min 
     #CheckM - 2 hours
     #Quast - 45 min
     #Prokka - 1 hour
-    #PhyloPhlan - 6 hours -> Most limiting analysis time-wise!
-    #BWA - 4-6 hours -> Limiting analysis time-wise!
-    #Deseq2 - variable -> ???
+    #PhyloPhlan - 6 hours
+    #BWA - 4-6 hours
+    #Htseq ~
+
     
 ##DATA MANAGEMENT PLAN
-    #Data and code separated. Code in a repository with version control. Small data files (final results, figures and text)
-    can be included in the repository, but never big data files.
+    #Data and code separated.
     #Data files should have unique and informative names in the format: XXX_name_name when required. Read files named as their SRA accessions.
     #There should be a README file per folder, explaining what's it used for 
     #Datafiles, specially big data files, should be compressed. UPPMAX directory can store up to 32 Gb.
@@ -92,30 +69,25 @@
               fastqc_report.txt
             fastqc_trim
               fastqc_report.txt
-          02_genome_assemly
-            assembly_softwareA-settingsX
-            assembly_softwareB_settingsX
-          03_structural_annotation
-            annotation_software_settingsX
-        code
-          000_gather_data.sh
-          001_preprocessing.sh
-          002_genome_assembly.sh
-          003_gstructural_annotation.sh
-        data
-          metadata
-            sample_information.csv
-          raw_data
-            metagenomics
-              SRX2209184.fastq.gz
-              SRX2209191.fastq.gz
-            metatranscriptomics
-              SRX2209192.fastq.gz
-              SRX2209187.fastq.gz
-          trimmed_data
-            metagenomics
-              SRX2209184.trimmed.fastq.gz
-              SRX2209191.trimmed.fastq.gz
-            metatranscriptomics
-              SRX2209192.trimmed.fastq.gz
-              SRX2209187.trimmed.fastq.gz
+          02_megahit #genome assembly
+            megahit_software
+            megahit_results
+          03_metabar #binning
+            metabat_software
+            metabat_results
+          04_checkm #completness and contamination
+            checkm_software
+            checkm_results
+          05_prokka #annotation
+            prokka_software
+            prokka_results
+          06_phylophlan #phylogeny
+            phylophlan_software
+            phylophlan_results
+          07_bwa #mapping
+            bwa_software
+            bwa_results
+          08_htseq #gene expression
+            htseq_software
+            htseq_results
+       
