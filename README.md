@@ -165,6 +165,8 @@ From these text files we can run an R script by merging all of them into a csv c
 
 ![80dd2490-d447-42a1-8893-1f730d01da06](https://github.com/maserez/Genome-Analysis/assets/129284184/00c85067-f7b4-47d2-bc25-4599f982e8e3)
 
+Most of the genes are not being expressed by most bins, however some of these bins are highly expressed and if we were to move forward in our analyses those would be the ones we would care about.
+
 
 ## PHYLOGENY
 In addition to gene expression analysis, a phylogenetic analysis was performed to investigate the evolutionary relationships between the microbial organisms present in the ¡ samples. PhyloPhlan was employed for this purpose. It utilizes a set of marker genes present in the genomes of different organisms to construct a phylogenetic tree that shows their evolutionary relationships.
